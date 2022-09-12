@@ -68,22 +68,25 @@ const inputs = {
         keyCode: 190,
         type: "number",
         canDisplay: true,
-    },
-    "c": {
+    }, "c": {
         key: "c",
         code: 'KeyC',
         keyCode: 67,
         type: "modify",
         canDisplay: false,
-    },
-    'Backspace': {
+    }, 'Backspace': {
         key: "Backspace",
         code: 'Backspace',
         keyCode: 8,
         type: "modify",
         canDisplay: false,
-    },
-    'x': {
+    }, '←': {
+        key: "Backspace",
+        code: 'Backspace',
+        keyCode: 8,
+        type: "modify",
+        canDisplay: false,
+    }, 'x': {
         key: "x",
         code: 'KeyX',
         keyCode: 88,
@@ -113,12 +116,6 @@ const inputs = {
         keyCode: 187,
         type: "operator",
         canDisplay: false,
-    }, "=": {
-        key: "=",
-        code: 'Equal',
-        keyCode: 187,
-        type: "operator",
-        canDisplay: false,
     }, "Enter": {
         key: "Enter",
         code: "Enter",
@@ -137,7 +134,7 @@ for (const number of numbers) {
     makeButton('number-button', number, numSection);
 }
 
-const operators = ["←", "clr", "x", "÷", "+", "-", "="];
+const operators = ["←", "c", "x", "/", "+", "-", "="];
 const operSection = document.querySelector('.operators');
 
 for (const operator of operators) {
@@ -148,11 +145,24 @@ function makeButton(className, textContent, parentNode) {
     const newBut = document.createElement('button');
     newBut.classList.add(className);
     newBut.textContent = textContent;
+    newBut.value = textContent;
+    newBut.onclick = updateDisplay;
     parentNode.appendChild(newBut);
 }
-
+function identifyInputValue(e) {
+    if (e.key) {
+        return e.key
+    } else if (e.target.value) {
+        return e.target.value
+    }
+}
 function updateDisplay(e) {
-    let pressedKey = e.key;
+    let pressedKey;
+    if (e.key) {
+        pressedKey = e.key;
+    } else {
+        pressedKey = e.target.value;
+    }
     if (inputs[pressedKey].canDisplay) {
         showTypedKey(pressedKey);
     } else if (inputs[pressedKey].key === "Backspace") {
@@ -218,12 +228,26 @@ function operate(parsedArray) {
     let remainingTerms = parsedArray;
     const operationCounts = countOperators(parsedArray);
     console.log(operationCounts);
-    if (Object.keys(operationCounts).includes('x')) {
-        for (let opCount = 1; opCount <= operationCounts['x']; opCount++) {
-            let i = parsedArray.indexOf('x');
+    const operationsToDo = Object.keys(operationCounts);
+
+    // sort operations by order of operations
+    operationsToDo.sort().reverse();
+    // perform operations
+    for (let operation of operationsToDo) {
+        for (let opCount = 1; opCount <= operationCounts[operation]; opCount++) {
+            let i = parsedArray.indexOf(operation);
             let previous = remainingTerms[i - 1];
             let next = remainingTerms[i + 1];
-            let answer = previous * next;
+            let answer;
+            if (operation === 'x') {
+                answer = multiply(previous, next);
+            } else if (operation === '/') {
+                answer = divide(previous, next);
+            } else if (operation === "+") {
+                answer = add(previous, next);
+            } else if (operation === "-") {
+                answer = subtract(previous, next);
+            }
             remainingTerms.splice(i - 1, 3, answer);
         }
     }
@@ -233,6 +257,7 @@ function operate(parsedArray) {
     answer = remainingTerms[0];
     showAnswer(answer);
 }
+
 function countOperators(parsedArray) {
     const operationSigns = ["x", "/", "+", "-"];
     let operatorCounts = parsedArray.reduce((totals, entry) => {
@@ -245,6 +270,23 @@ function countOperators(parsedArray) {
     }, {});
     return operatorCounts;
 }
+function add(a, b) {
+    console.log(parseFloat(a));
+    console.log(parseFloat(b));
+    return parseFloat(a) + parseFloat(b);
+};
+
+function subtract(a, b) {
+    return a - b;
+};
+
+function multiply(a, b) {
+    return a * b;
+};
+function divide(a, b) {
+    return a / b;
+}
+//display updates (clear, backspace, error, update typed values)
 function showTypedKey(typedKey) {
     if (display.textContent == 0 && inputs[typedKey].type == 'operator') {
         return;
@@ -265,6 +307,8 @@ function backSpace() {
 function showAnswer(answer) {
     if (!answer) {
         showError()
+    } else if (Math.abs(answer - Math.floor(answer)) < 0.00001) {
+        display.textContent = Math.floor(answer);
     } else {
         display.textContent = answer;
     }

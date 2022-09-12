@@ -7,11 +7,11 @@ This calculator can perform the following operations:
 - subtract
 - multiply
 - divide
-It also applies the order of operations.
+It applies the order of operations when performing calculations.
 
 While inputting values, you can 
 - backspace to delete a value
-- reset inputs
+- reset inputs (type 'c')
 
 Inputs can be made by clicking the buttons or through keyboard inputs.
 
