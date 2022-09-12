@@ -1,0 +1,90 @@
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Roboto Mono', monospace;
+    background-color: rgb(190, 180, 180);
+    padding: 0;
+    margin: 0;
+}
+
+header,
+footer {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    background: rgb(244, 223, 223);
+    border-top: 5px solid rgb(107, 93, 93);
+    border-bottom: 5px solid rgb(107, 93, 93);
+    padding: 20px;
+
+}
+h1, h2{
+    padding: 0;
+    margin: 0;
+}
+h2{
+    font-size: 1em;
+    font-weight: 300;
+}
+
+#calculator {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: stretch;
+    width: 70%;
+    background-color: rgb(165, 53, 53);
+    border: 5px solid rgb(122, 17, 17);
+    border-radius: 20px;
+    padding: 20px;
+}
+.display-screen{
+    background-color:#666;
+    border: 5px solid rgb(56, 56, 56);
+    border-radius: 20px;
+    padding: 20px;
+}
+.display{
+    text-align: end;
+    font-size: 2em;
+    padding: 0;
+    margin: 0;
+}
+.buttons{
+    display: flex;
+    justify-content: space-between;
+}
+.numbers{
+    display: flex;
+    flex-wrap: wrap-reverse;
+    width: 61%;
+}
+.operators{
+    display: flex;
+    flex-wrap: wrap;
+    width: 37%;
+}
+button{
+    background-color: rgb(255, 248, 248);
+    font-family:'Roboto Mono', monospace;
+    height: 23%;
+    width: 30%;
+    border: 5px solid rgb(123, 95, 95);
+    border-radius: 10px;
+    font-size: 2em;
+    margin: 2px;
+}
+.operators button{
+    width: 45%;
+}
+.operators button:last-child{
+   width: 90%;
+   align-self: center;
+}
+button:hover{
+    background-color: rgb(220, 218, 218);
+}
