@@ -15,6 +15,7 @@ Current features:
 - Calculates decimal numbers
 - accepts click or typed inputs
 - shows error if dividing by 0
+- negative numbers
 
 Later features:
-- negative numbers
+- parentheses
