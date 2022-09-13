@@ -36,7 +36,7 @@ h2{
     justify-content: space-between;
     gap: 20px;
     align-items: stretch;
-    width: 70%;
+    width: 50%;
     background-color: rgb(165, 53, 53);
     border: 5px solid rgb(122, 17, 17);
     border-radius: 20px;
@@ -87,4 +87,22 @@ button{
 }
 button:hover{
     background-color: rgb(220, 218, 218);
+}
+.black-bg{
+    background-color:#666;
+}
+@media screen and (max-width: 700px) {
+    .numbers button:nth-child(3){
+        /* background-color: black; */
+        font-size: 1.5em;
+    }
+    #calculator{
+        width: 80%;
+    }
+}
+@media screen and (max-width: 450px) {
+    .numbers button:nth-child(3){
+        /* background-color: black; */
+        font-size: 1em;
+    }
 }

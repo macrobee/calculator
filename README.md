@@ -7,15 +7,14 @@ This calculator can perform the following operations:
 - subtract
 - multiply
 - divide
-It applies the order of operations when performing calculations.
 
-While inputting values, you can 
+Current features: 
+- applies order of operations
 - backspace to delete a value
 - reset inputs (type 'c')
-
-Inputs can be made by clicking the buttons or through keyboard inputs.
+- Calculates decimal numbers
+- accepts click or typed inputs
+- shows error if dividing by 0
 
 Later features:
-- decimal numbers
 - negative numbers
-- no dividing by 0

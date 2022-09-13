@@ -125,18 +125,17 @@ const inputs = {
     }
 }
 const validKeys = Object.keys(inputs);
-console.log(validKeys);
+const operationSigns = ["x", "/", "+", "-"];
+
 // create buttons
 const numbers = [0, ".", "(-)", 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const numSection = document.querySelector('.numbers');
+const operators = ["←", "c", "x", "/", "+", "-", "="];
+const operSection = document.querySelector('.operators');
 
 for (const number of numbers) {
     makeButton('number-button', number, numSection);
 }
-
-const operators = ["←", "c", "x", "/", "+", "-", "="];
-const operSection = document.querySelector('.operators');
-
 for (const operator of operators) {
     makeButton('operator-button', operator, operSection);
 }
@@ -149,6 +148,10 @@ function makeButton(className, textContent, parentNode) {
     newBut.onclick = updateDisplay;
     parentNode.appendChild(newBut);
 }
+const negativeButton = document.querySelectorAll('.number-button')[2];
+negativeButton.value = "-";
+
+// receive inputs *****************************
 function identifyInputValue(e) {
     if (e.key) {
         return e.key
@@ -176,6 +179,7 @@ function updateDisplay(e) {
     console.log(pressedKey);
 
 }
+//calculate***********************
 function readInput() {
     let characters = display.textContent.split("");
     console.log(characters);
@@ -188,31 +192,37 @@ function readInput() {
     let previousChar = "";
     let newEntry;
     let currentChar;
+    let nextCharIsNegative = false;
     let currentIndex = 0;
     for (const character of characters) {
         currentChar = character;
-
         if (previousChar === "") {
-            previousChar = currentChar; //first character -> update entry and prevChar
-            newEntry = currentChar;
+            if (currentChar == "-") { nextCharIsNegative = true; }
+            newEntry = currentChar;//first character -> update entry and prevChar
 
         } else if (inputs[previousChar].type === 'operator' && inputs[currentChar].type === 'number') {
-            previousChar = currentChar; //oper-num -> update prevChar
-            newEntry = currentChar;
+            nextCharIsNegative ?
+                newEntry = "-" + currentChar :
+                newEntry = currentChar; //oper-num -> update prevChar
+            nextCharIsNegative = false;
 
         } else if (inputs[previousChar].type === 'number' && inputs[currentChar].type === 'number') {
             newEntry = newEntry + currentChar.toString(); //num-num -> concat
-            previousChar = currentChar;
 
         } else if (inputs[previousChar].type === 'operator' && inputs[currentChar].type === 'operator') {
-            return; //ignore if consecutive operators
+            if (currentChar === '-') { //make next number negative if it's a minus sign
+                nextCharIsNegative = true;
+            } else {//ignore if consecutive operators
+                return;
+            }
 
         } else if (inputs[previousChar].type === 'number' && inputs[currentChar].type === 'operator') {
-            parsedCharacters.push(newEntry); //operator
+            parsedCharacters.push(newEntry); //num-operator -> push to parsedCharacters
             parsedCharacters.push(currentChar);
-            previousChar = currentChar;
             newEntry = "";
         }
+
+        previousChar = currentChar;
 
         if (currentIndex == characters.length - 1) { //handling final entry
             parsedCharacters.push(newEntry);
@@ -222,7 +232,10 @@ function readInput() {
     console.table(parsedCharacters);
     return parsedCharacters;
 }
+
+// handle calculations ****************************************
 function operate(parsedArray) {
+    console.log(parsedArray);
     //identify operations
     let answer = 0;
     let remainingTerms = parsedArray;
@@ -255,11 +268,14 @@ function operate(parsedArray) {
     // let answer = operations.sum(a,b);
     // return answer;
     answer = remainingTerms[0];
+    if (!parseFloat(answer)) {
+        showError();
+        return;
+    }
     showAnswer(answer);
 }
 
 function countOperators(parsedArray) {
-    const operationSigns = ["x", "/", "+", "-"];
     let operatorCounts = parsedArray.reduce((totals, entry) => {
         if (!totals[entry] && operationSigns.includes(entry)) {
             totals[entry] = 1;
@@ -289,9 +305,8 @@ function divide(a, b) {
 //display updates (clear, backspace, error, update typed values)
 function showTypedKey(typedKey) {
     if (display.textContent == 0 && inputs[typedKey].type == 'operator') {
-        return;
-    }
-    else if (display.textContent == 0) {
+        display.textContent = `0`;
+    } else if (display.textContent == 0) {
         display.textContent = "";
     }
     // console.log('valid key');
@@ -305,19 +320,23 @@ function backSpace() {
         display.textContent = "0";
 }
 function showAnswer(answer) {
-    if (!answer) {
-        showError()
-    } else if (Math.abs(answer - Math.floor(answer)) < 0.00001) {
-        display.textContent = Math.floor(answer);
+    console.log(answer);
+    console.log(typeof answer);
+    if (answer == 'Infinity' || answer == NaN) {
+        showError();
     } else {
         display.textContent = answer;
     }
 }
 function clear() {
     display.textContent = "0";
+    document.removeEventListener('keydown', clear);
+    document.removeEventListener('click', clear);
 }
 
 function showError() {
     display.textContent = "ERROR";
+    document.addEventListener('keydown', clear);
+    document.addEventListener('click', clear);
 }
 document.addEventListener('keydown', updateDisplay);
