@@ -174,7 +174,8 @@ function updateDisplay(e) {
         clear();
     } else if (inputs[pressedKey].key === "=" || inputs[pressedKey].key === "Enter") {
         let parsedArray = readInput();
-        operate(parsedArray);
+        let answer = operate(parsedArray);
+        showAnswer(answer);
     }
     console.log(pressedKey);
 
@@ -211,7 +212,7 @@ function readInput() {
 
         } else if (inputs[previousChar].type === 'operator' && inputs[currentChar].type === 'operator') {
             if (currentChar === '-') { //make next number negative if it's a minus sign
-                nextCharIsNegative = true;
+                nextCharIsNegative = !nextCharIsNegative;
             } else {//ignore if consecutive operators
                 return;
             }
@@ -272,7 +273,7 @@ function operate(parsedArray) {
         showError();
         return;
     }
-    showAnswer(answer);
+    return answer;
 }
 
 function countOperators(parsedArray) {
